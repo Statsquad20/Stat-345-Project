@@ -52,6 +52,20 @@ year <- rep(x,length(rank))
 top <- cbind(year,rank,artists,songs)
 }
 
+# this is the first attempt at how to get the data from 2013 and 2017-2019. Trying to use different regex with lookaheads and look behinds.This is not good yet but it is an idea 
+songs2 <- function(x) {
+url <- paste0("http://billboardtop100of.com/",x,"-2/")
+h <- read_html(url)
+allinfo <- h %>% html_nodes("p~ p+ p") %>% html_text()
+rank <- str_extract(allinfo, "\\d+(?=\\s\\w)")
+artists <- str_extract(allinfo, "(?<=\\d\\.)\\w+(?=\\-)")
+songs <- str_extract(allinfo, " (?<=\\-)\\w+")
+year <- rep(x,length(rank))
+top <- cbind(year,rank,artists,songs)
+}
+
+test <- songs2(2013)
+
 list_50 <- lapply(y_50, songs)
 #Gets a list containing each years' matrices
 mat_50 <- do.call(rbind,list_50)
